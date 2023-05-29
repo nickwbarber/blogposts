@@ -1,0 +1,19 @@
+{
+  "name": "blogposts",
+  "version": "0.0.1",
+  "description": "## application description > [...] a **blog list application**, that allows users to save information about interesting blogs they have stumbled across on the internet.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickwbarber/blogposts.git"
+  },
+  "author": "Nick Barber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickwbarber/blogposts/issues"
+  },
+  "homepage": "https://github.com/nickwbarber/blogposts#readme"
+}
