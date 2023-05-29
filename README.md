@@ -11,6 +11,9 @@ This project was started with the code given in `starting_point.js`
 
 ---
 
+## additional requirements
+- MongoDB Atlas as the database
+
 ### purpose
 (exercise for the Fullstack Open Course by the University of Helsinki)
 
