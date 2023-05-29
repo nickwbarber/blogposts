@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/nickwbarber/blogposts/issues"
   },
-  "homepage": "https://github.com/nickwbarber/blogposts#readme"
+  "homepage": "https://github.com/nickwbarber/blogposts#readme",
+  "dependencies": {
+    "eslint": "^8.41.0"
+  }
 }
