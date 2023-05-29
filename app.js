@@ -15,8 +15,6 @@ const middleware  = require('./utils/middleware')
 
 const app = express()
 
-// basic request logging
-
 try {
   mongoose.connect(config.MONGODB_URI)
 } catch (err) {
