@@ -29,3 +29,19 @@ test('favorite blog', () => {
   expect(favoriteBlog).toEqual(blog_list.blogs[2])
   expect(favoriteBlog.likes).toBe(12)
 })
+
+test('author blog counts', () => {
+  const blogs = blog_list.blogs
+  const authorBlogCounts = listHelper.authorBlogCounts(blogs)
+  expect(authorBlogCounts).toEqual(new Map([
+    ["Michael Chan", 1],
+    ["Edsger W. Dijkstra", 2],
+    ["Robert C. Martin", 3],
+  ]))
+})
+
+test('most blogs', () => {
+  const blogs = blog_list.blogs
+  const authorWithMostBlogs = listHelper.mostBlogs(blogs)
+  expect(authorWithMostBlogs).toEqual({ author: "Robert C. Martin", blogs: 3 })
+})
