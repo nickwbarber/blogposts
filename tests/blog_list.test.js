@@ -44,4 +44,3 @@ test('most blogs', () => {
   const blogs = blog_list.blogs
   const authorWithMostBlogs = listHelper.mostBlogs(blogs)
   expect(authorWithMostBlogs).toEqual({ author: "Robert C. Martin", blogs: 3 })
-})
