@@ -9,11 +9,11 @@ test('dummy returns one', () => {
 
 describe('total likes', () => {
   const blogs = blog_list.blogs
-  
+
   test('of empty list is zero', () =>{
     expect(listHelper.totalLikes([])).toBe(0)
   })
-  
+
   test('when list has only one blog equals the likes of that', () => {
     expect(listHelper.totalLikes(blogs.slice(0,1))).toBe(7)
   })
@@ -44,3 +44,10 @@ test('most blogs', () => {
   const blogs = blog_list.blogs
   const authorWithMostBlogs = listHelper.mostBlogs(blogs)
   expect(authorWithMostBlogs).toEqual({ author: "Robert C. Martin", blogs: 3 })
+})
+
+test.only('most likes', () => {
+  const blogs = blog_list.blogs
+  const authorWithMostLikes = listHelper.mostLikes(blogs)
+  expect(authorWithMostLikes).toEqual({ author: "Edsger W. Dijkstra", likes: 17 })
+})

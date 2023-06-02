@@ -35,10 +35,34 @@ const mostBlogs = blogs => {
   return authorWithMostBlogs
 }
 
+/// todo
+const authorLikeCounts = blogs => {
+  const authorLikeCounts = new Map(blogs.map(blog => [blog.author, 0]))
+  blogs.map(blog => {
+    const author = blog.author
+    const totalLikes = authorLikeCounts.get(author) + blog.likes
+    authorLikeCounts.set(blog.author, totalLikes)
+  })
+  return authorLikeCounts
+}
+
+const mostLikes = blogs => {
+  const authorWithMostLikes = Array.from(authorLikeCounts(blogs).entries())
+    .map(([ author, likes ] ) => { return { author, likes } })
+    .reduce((prevAuthor, currAuthor) => {
+      return prevAuthor.likes > currAuthor.likes
+        ? prevAuthor
+        : currAuthor
+    })
+  return authorWithMostLikes
+}
+///
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   authorBlogCounts,
   mostBlogs,
+  mostLikes,
 }
