@@ -17,15 +17,15 @@ const favoriteBlog = blogs => {
 const authorBlogCounts = blogs => {
   const authorBlogCounts = new Map(blogs.map(blog => [blog.author, 0]))
   blogs.map(blog => {
-    author = blog.author
-    totalBlogs = authorBlogCounts.get(author) + 1
+    const author = blog.author
+    const totalBlogs = authorBlogCounts.get(author) + 1
     authorBlogCounts.set(author, totalBlogs)
   })
   return authorBlogCounts
 }
 
 const mostBlogs = blogs => {
-  authorWithMostBlogs = Array.from(authorBlogCounts(blogs).entries())
+  const authorWithMostBlogs = Array.from(authorBlogCounts(blogs).entries())
     .map(([ author, blogs ] ) => { return { author, blogs } })
     .reduce((prevAuthor, currAuthor) => {
       return prevAuthor.blogs > currAuthor.blogs
