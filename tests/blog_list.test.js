@@ -10,7 +10,7 @@ test('dummy returns one', () => {
 describe('total likes', () => {
   const blogs = blog_list.blogs
 
-  test('of empty list is zero', () =>{
+  test('of empty list is zero', () => {
     expect(listHelper.totalLikes([])).toBe(0)
   })
 
