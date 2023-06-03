@@ -46,7 +46,7 @@ test('most blogs', () => {
   expect(authorWithMostBlogs).toEqual({ author: "Robert C. Martin", blogs: 3 })
 })
 
-test.only('most likes', () => {
+test('most likes', () => {
   const blogs = blog_list.blogs
   const authorWithMostLikes = listHelper.mostLikes(blogs)
   expect(authorWithMostLikes).toEqual({ author: "Edsger W. Dijkstra", likes: 17 })
