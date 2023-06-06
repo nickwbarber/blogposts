@@ -51,3 +51,8 @@ test('most likes', () => {
   const authorWithMostLikes = listHelper.mostLikes(blogs)
   expect(authorWithMostLikes).toEqual({ author: "Edsger W. Dijkstra", likes: 17 })
 })
+
+test('identifier is defined', () => {
+  const blogs = blog_list.blogs
+  expect(blogs.every(blog => blog._id)).toBeDefined()
+})
