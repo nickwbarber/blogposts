@@ -15,6 +15,12 @@ test('GET /api/blogs', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('identifier is defined', async () => {
+  const blogs = (await api.get('/api/blogs')).body
+  expect(blogs.every(blog => blog.id)).toBeTruthy()
+})
+
+
 afterAll(async () => {
   mongoose.connection.close()
 })
