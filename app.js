@@ -6,6 +6,7 @@ require('dotenv').config()
 const cors      = require('cors')
 const express   = require('express')
 const mongoose  = require('mongoose')
+require('express-async-errors')
 
 // internal imports
 const config      = require('./utils/config')
