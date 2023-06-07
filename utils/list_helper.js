@@ -35,7 +35,6 @@ const mostBlogs = blogs => {
   return authorWithMostBlogs
 }
 
-/// todo
 const authorLikeCounts = blogs => {
   const authorLikeCounts = new Map(blogs.map(blog => [blog.author, 0]))
   blogs.map(blog => {
@@ -56,7 +55,6 @@ const mostLikes = blogs => {
     })
   return authorWithMostLikes
 }
-///
 
 module.exports = {
   dummy,
