@@ -61,6 +61,17 @@ describe('POST /api/blogs', () => {
     expect(blogsAfter.body.map(getBlogWithoutId))
       .toContainEqual(getBlogWithoutId(newBlog))
   })
+
+  test('handles missing likes', async () => {
+    const blogWithoutLikes = newBlog
+    delete blogWithoutLikes.likes
+
+    const postResponse = await api
+      .post('/api/blogs')
+      .send(blogWithoutLikes)
+
+    expect(postResponse.body.likes).toBe(0)
+  })
 })
 ///////////
 
