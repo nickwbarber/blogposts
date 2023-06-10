@@ -72,6 +72,28 @@ describe('POST /api/blogs', () => {
 
     expect(postResponse.body.likes).toBe(0)
   })
+
+  test('handles missing title', async () => {
+    const blogWithoutTitle = newBlog
+    delete blogWithoutTitle.title
+
+    const postResponse = await api
+      .post('/api/blogs')
+      .send(blogWithoutTitle)
+
+    expect(postResponse.status).toBe(400)
+  })
+
+  test('handles missing URL', async () => {
+    const blogWithoutUrl = newBlog
+    delete blogWithoutUrl.url
+
+    const postResponse = await api
+      .post('/api/blogs')
+      .send(blogWithoutUrl)
+
+    expect(postResponse.status).toBe(400)
+  })
 })
 ///////////
 
