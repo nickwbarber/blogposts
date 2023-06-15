@@ -1,31 +1,30 @@
 // Desc: Controller for blog routes
 
-const blogRouter = require('express').Router()
-const Blog = require('../models/blog')
+const blogRouter = require('express').Router();
+const Blog = require('../models/blog');
 
 blogRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs)
-})
+  const blogs = await Blog.find({});
+  response.json(blogs);
+});
 
 blogRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
+  const blog = new Blog(request.body);
 
   // missing likes is okay --> default to 0
-  blog.likes = blog.likes ? blog.likes : 0
+  blog.likes = blog.likes ? blog.likes : 0;
 
   // Title and URL is required
   // missing --> bad request
   if (!blog.title || !blog.url) {
-    response.status(400).end()
-    return
+    response.status(400).end();
+    return;
   }
 
-  const result = await blog.save()
-  response.status(201).json(result)
-})
+  const result = await blog.save();
+  response.status(201).json(result);
+});
 
-module.exports = blogRouter
 blogRouter.delete('/delete/:id', async (request, response) => {
   const { id } = request.params;
   // const blogToDelete = await Blog.find({ _id: id })
@@ -36,3 +35,5 @@ blogRouter.delete('/delete/:id', async (request, response) => {
   await blogToDelete.deleteOne();
   response.status(204).end();
 });
+
+module.exports = blogRouter;
