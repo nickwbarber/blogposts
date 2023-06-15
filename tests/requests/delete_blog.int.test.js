@@ -5,7 +5,6 @@
 const supertest = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../../app');
-const Blog = require('../../models/blog');
 
 const api = supertest(app);
 
