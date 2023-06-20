@@ -11,6 +11,9 @@ const api = supertest(app);
 /* Make some data available to all tests */
 
 const TEST_NUM_OF_LIKES = Math.floor(Math.random()*10000);
+const TEST_TITLE = `title-${Math.floor(Math.random()*10000)}`;
+const TEST_AUTHOR = `author-${Math.floor(Math.random()*10000)}`;
+const TEST_URL = `url-${Math.floor(Math.random()*10000)}`;
 
 let blogToUpdate;
 let blogsAfter;
@@ -21,7 +24,14 @@ let blogAfterUpdate;
 beforeAll(async () => {
   blogsBefore = (await api.get('/api/blogs')).body;
   blogToUpdate = blogsBefore[blogsBefore.length - 1];
-  responseOnUpdate = await api.put(`/api/blogs/${blogToUpdate.id}`).send({ likes: TEST_NUM_OF_LIKES });
+  responseOnUpdate = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send({
+      title: TEST_TITLE,
+      author: TEST_AUTHOR,
+      likes: TEST_NUM_OF_LIKES,
+      url: TEST_URL,
+    });
   blogsAfter = (await api.get('/api/blogs')).body;
   blogAfterUpdate = blogsAfter[blogsAfter.length - 1];
 });
@@ -49,6 +59,18 @@ describe('update a blog', () => {
 
   test('does not alter blog list length', () => {
     expect(blogsAfter.length).toBe(blogsBefore.length);
+  });
+
+  test('blog after update contains the right author', () => {
+    expect(blogAfterUpdate.author).toBe(TEST_AUTHOR);
+  });
+
+  test('blog after update contains the right title', () => {
+    expect(blogAfterUpdate.title).toBe(TEST_TITLE);
+  });
+
+  test('blog after update contains the right url', () => {
+    expect(blogAfterUpdate.url).toBe(TEST_URL);
   });
 
   test('blog after update contains the right number of likes', () => {

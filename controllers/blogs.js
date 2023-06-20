@@ -52,7 +52,11 @@ blogRouter.put('/:id', async (request, response) => {
     return;
   }
 
-  blogToUpdate.likes = Number(request.body.likes);
+   for (const propName in request.body) {
+    if (blogToUpdate[propName] !== request.body[propName]) {
+      blogToUpdate[propName] = request.body[propName];
+    }
+  }
 
   const result = await blogToUpdate.save();
   response.status(200).json(result);
