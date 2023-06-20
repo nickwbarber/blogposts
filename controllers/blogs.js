@@ -8,6 +8,15 @@ blogRouter.get('/', async (request, response) => {
   response.json(blogs);
 });
 
+blogRouter.get('/id/:id', async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  if (!(blog instanceof Blog)) {
+    response.status(404).end();
+    return;
+  }
+  response.json(blog);
+});
+
 blogRouter.post('/', async (request, response) => {
   const blog = new Blog(request.body);
 
@@ -27,7 +36,6 @@ blogRouter.post('/', async (request, response) => {
 
 blogRouter.delete('/delete/:id', async (request, response) => {
   const { id } = request.params;
-  // const blogToDelete = await Blog.find({ _id: id })
   const blogToDelete = await Blog.findById(id);
   if (!blogToDelete) {
     response.status(404).end();
