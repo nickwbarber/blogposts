@@ -52,11 +52,11 @@ blogRouter.put('/:id', async (request, response) => {
     return;
   }
 
-   for (const propName in request.body) {
+  Object.keys(request.body).forEach((propName) => {
     if (blogToUpdate[propName] !== request.body[propName]) {
       blogToUpdate[propName] = request.body[propName];
     }
-  }
+  });
 
   const result = await blogToUpdate.save();
   response.status(200).json(result);
