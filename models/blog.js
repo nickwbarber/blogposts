@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-underscore-dangle */
 // Desc: Blog model for MongoDB
 const mongoose = require('mongoose')
 
