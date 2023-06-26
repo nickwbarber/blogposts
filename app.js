@@ -1,5 +1,3 @@
-// Desc: Main application file
-
 require('dotenv').config();
 
 // external imports

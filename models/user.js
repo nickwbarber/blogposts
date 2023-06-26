@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
-// Desc: User model for MongoDB
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
