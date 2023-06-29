@@ -24,3 +24,14 @@ describe('adding a user', () => {
     expect(response.status).toBe(201);
   });
 });
+describe('adding an user with username shorter than 3 characters', () => {
+  test('should return status 400', async () => {
+    const response = await api.post('/api/users').send({
+      username: 'username1',
+      name: 'Test User 1',
+      password: 'password1',
+    });
+
+    expect(response.status).toBe(400);
+  });
+});

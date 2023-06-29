@@ -2,7 +2,7 @@ const userRouter = require('express').Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
-const { isUnique } = require('../utils/user_helper');
+const { isUnique, isValidUsername } = require('../utils/user_helper');
 
 // get all users
 userRouter.get('/', async (request, response) => {
@@ -16,7 +16,9 @@ userRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body;
 
   // ensure username and password are provided
-  if (!username || !password) {
+  if (!username
+    || !password
+    || !isValidUsername(username)) {
     response.status(400).end();
   }
 
