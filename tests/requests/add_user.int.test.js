@@ -13,7 +13,7 @@ afterAll(async () => {
   mongoose.connection.close();
 });
 
-describe('adding a user', () => {
+describe('adding a valid user', () => {
   test('should return status 200', async () => {
     const response = await api.post('/api/users').send({
       username: 'username1',
