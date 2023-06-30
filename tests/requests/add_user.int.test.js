@@ -5,7 +5,7 @@ const app = require('../../app');
 
 const api = supertest(app);
 
-beforeAll(async () => {
+beforeEach(async () => {
   await User.deleteMany({});
 });
 
