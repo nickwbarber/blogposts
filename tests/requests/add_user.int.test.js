@@ -35,7 +35,7 @@ describe('adding a valid user', () => {
 describe('adding an user with username shorter than 3 characters', () => {
   test('should return status 400', async () => {
     const response = await api.post('/api/users').send({
-      username: 'username1',
+      username: 'us',
       name: 'Test User 1',
       password: 'password1',
     });
