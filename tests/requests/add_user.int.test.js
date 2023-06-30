@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const mongoose = require('mongoose');
+
 const User = require('../../models/user');
 const app = require('../../app');
 
@@ -29,6 +30,23 @@ describe('adding a valid user', () => {
     });
 
     expect(response.status).toBe(201);
+  });
+
+  test('should successfully add the user to the server', async () => {
+    const testUser = {
+      username: 'username1',
+      name: 'Test User 1',
+      password: 'password1',
+    };
+
+    await api.post('/api/users').send(testUser);
+
+    const users = await User.find({});
+    const foundUser = users[0];
+
+    expect(users.length).toBe(1);
+    expect(foundUser.username).toEqual(testUser.username);
+    expect(foundUser.name).toEqual(testUser.name);
   });
 });
 
