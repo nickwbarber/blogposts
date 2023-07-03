@@ -17,19 +17,21 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
-  const requiredFields = ["title", "url"];
+  const hasRequiredFields = (body) => {
+    return ["title", "url"].reduce((acc, field) => {
+      return acc && field in body;
+    }, true);
+  };
+
+  if (!hasRequiredFields(request.body)) {
+    response.status(400).end();
+    return;
+  }
 
   const blog = new Blog(request.body);
 
   // missing likes is okay --> default to 0
   blog.likes = blog.likes ? blog.likes : 0;
-
-  // Title and URL is required
-  // missing --> bad request
-  if (!blog.title || !blog.url) {
-    response.status(400).end();
-    return;
-  }
 
   // NOTE: This is only to test out adding a User to the blog
   // blog.user = User.findOne({}).id;
