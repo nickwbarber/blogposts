@@ -15,11 +15,9 @@ const newBlog = {
 
 const withoutProps = (blog, props) => {
   const blogWithoutProps = blog;
-
   props.forEach((prop) => {
     delete blog[prop];
   });
-
   return blogWithoutProps;
 };
 
@@ -66,5 +64,11 @@ describe("Submitting a blog", () => {
       .send(withoutProps(newBlog, ["url"]));
 
     expect(response.status).toBe(400);
+  });
+
+  test("contains information about submitting user", async () => {
+    const response = await api.post("/api/blogs").send(newBlog);
+
+    expect(response.user.username).toBeDefined();
   });
 });
