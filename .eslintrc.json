@@ -6,8 +6,9 @@
     "jest": true
   },
   "extends": "airbnb-base",
-  "overrides": [
-  ],
+  "overrides": {
+    "avoidEscape": true,
+  },
   "parserOptions": {
     "ecmaVersion": "latest"
   },
