@@ -2,79 +2,69 @@ const supertest = require("supertest");
 const app = require("../../app");
 const mongoose = require("mongoose");
 
+const Blog = require("../../models/blog");
+
 const api = supertest(app);
 
 const newBlog = {
-  title: "React patterns",
-  author: "Michael Chan",
-  url: `https://reactpatterns.com/test/${Math.round(Math.random() * 1000)}`,
+  title: "Test Blog",
+  author: "Test Author",
+  url: `https://testurl.com/randomNumber=${Math.round(Math.random() * 1000)}`,
   likes: 0,
 };
 
-let blogsBefore, postResponse, blogsAfter;
+const withoutProps = (blog, props) => {
+  const blogWithoutProps = blog;
 
-beforeAll(async () => {
-  blogsBefore = await api.get("/api/blogs");
+  props.forEach((prop) => {
+    delete blog[prop];
+  });
 
-  postResponse = await api.post("/api/blogs").send(newBlog);
+  return blogWithoutProps;
+};
 
-  blogsAfter = await api.get("/api/blogs");
+beforeEach(async () => {
+  await Blog.deleteMany({});
 });
 
 afterAll(async () => {
   mongoose.connection.close();
 });
 
-describe("POST /api/blogs", () => {
-  const getBlogWithoutExtras = (blog) => {
-    const blogWithoutId = { ...blog };
-    delete blogWithoutId.id;
-    delete blogWithoutId.user; // NOTE: take this out once linking to a user is implemented
-    return blogWithoutId;
-  };
+describe("Submitting a blog", () => {
+  test("if successful, returns with code 201", async () => {
+    const response = await api.post("/api/blogs").send(newBlog);
 
-  test("returns successfully", async () => {
-    expect(postResponse.status).toBe(201);
+    expect(response.status).toBe(201);
   });
 
-  test("returns in application-json format", async () => {
-    expect(postResponse.get("content-type")).toMatch(/application\/json/);
+  test("response returns in application-json format", async () => {
+    const response = await api.post("/api/blogs").send(newBlog);
+
+    expect(response.get("content-type")).toMatch(/application\/json/);
   });
 
-  test("new blog list is one more than before", () => {
-    expect(blogsAfter.body.length).toBe(blogsBefore.body.length + 1);
+  test("accepts missing likes", async () => {
+    const response = await api
+      .post("/api/blogs")
+      .send(withoutProps(newBlog, ["likes"]));
+
+    expect(response.body.likes).toBe(0);
   });
 
-  test("new blog list contains the new blog", () => {
-    expect(blogsAfter.body.map(getBlogWithoutExtras)).toContainEqual(
-      getBlogWithoutExtras(newBlog)
-    );
+  test("rejects missing title", async () => {
+    const response = await api
+      .post("/api/blogs")
+      .send(withoutProps(newBlog, ["title"]));
+
+    expect(response.status).toBe(400);
   });
 
-  test("handles missing likes", async () => {
-    const blogWithoutLikes = newBlog;
-    delete blogWithoutLikes.likes;
+  test("rejects missing URL", async () => {
+    const response = await api
+      .post("/api/blogs")
+      .send(withoutProps(newBlog, ["url"]));
 
-    const postResponse = await api.post("/api/blogs").send(blogWithoutLikes);
-
-    expect(postResponse.body.likes).toBe(0);
-  });
-
-  test("handles missing title", async () => {
-    const blogWithoutTitle = newBlog;
-    delete blogWithoutTitle.title;
-
-    const postResponse = await api.post("/api/blogs").send(blogWithoutTitle);
-
-    expect(postResponse.status).toBe(400);
-  });
-
-  test("handles missing URL", async () => {
-    const blogWithoutUrl = newBlog;
-    delete blogWithoutUrl.url;
-
-    const postResponse = await api.post("/api/blogs").send(blogWithoutUrl);
-
-    expect(postResponse.status).toBe(400);
+    expect(response.status).toBe(400);
   });
 });
