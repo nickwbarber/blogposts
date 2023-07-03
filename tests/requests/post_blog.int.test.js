@@ -1,15 +1,9 @@
-// post_blog.test.js
-//
-// Desc: Test the post-blog
-
 const supertest = require("supertest");
 const app = require("../../app");
 const mongoose = require("mongoose");
 
 const api = supertest(app);
 
-///////////////////////////////////////////
-/* Make some data available to all tests */
 const newBlog = {
   title: "React patterns",
   author: "Michael Chan",
@@ -30,15 +24,12 @@ beforeAll(async () => {
 afterAll(async () => {
   mongoose.connection.close();
 });
-///////////////////////////////////////////
 
-///////////
-/* tests */
 describe("POST /api/blogs", () => {
   const getBlogWithoutExtras = (blog) => {
     const blogWithoutId = { ...blog };
     delete blogWithoutId.id;
-    delete blogWithoutId.user;
+    delete blogWithoutId.user; // NOTE: take this out once linking to a user is implemented
     return blogWithoutId;
   };
 
@@ -87,4 +78,3 @@ describe("POST /api/blogs", () => {
     expect(postResponse.status).toBe(400);
   });
 });
-///////////
