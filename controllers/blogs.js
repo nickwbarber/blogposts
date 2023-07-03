@@ -1,5 +1,3 @@
-// Desc: Controller for blog routes
-
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 
