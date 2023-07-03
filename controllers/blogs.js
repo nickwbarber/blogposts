@@ -1,14 +1,15 @@
 // Desc: Controller for blog routes
 
-const blogRouter = require('express').Router();
-const Blog = require('../models/blog');
+const blogRouter = require("express").Router();
+const Blog = require("../models/blog");
 
-blogRouter.get('/', async (request, response) => {
+blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({});
+  // await blogs.populate("user");
   response.json(blogs);
 });
 
-blogRouter.get('/id/:id', async (request, response) => {
+blogRouter.get("/id/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   if (!(blog instanceof Blog)) {
     response.status(404).end();
@@ -17,7 +18,9 @@ blogRouter.get('/id/:id', async (request, response) => {
   response.json(blog);
 });
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post("/", async (request, response) => {
+  const requiredFields = ["title", "url"];
+
   const blog = new Blog(request.body);
 
   // missing likes is okay --> default to 0
@@ -30,11 +33,14 @@ blogRouter.post('/', async (request, response) => {
     return;
   }
 
+  // NOTE: This is only to test out adding a User to the blog
+  // blog.user = User.findOne({}).id;
+
   const result = await blog.save();
   response.status(201).json(result);
 });
 
-blogRouter.delete('/delete/:id', async (request, response) => {
+blogRouter.delete("/delete/:id", async (request, response) => {
   const { id } = request.params;
   const blogToDelete = await Blog.findById(id);
   if (!blogToDelete) {
@@ -44,7 +50,7 @@ blogRouter.delete('/delete/:id', async (request, response) => {
   response.status(204).end();
 });
 
-blogRouter.put('/:id', async (request, response) => {
+blogRouter.put("/:id", async (request, response) => {
   const blogToUpdate = await Blog.findById(request.params.id);
 
   if (!(blogToUpdate instanceof Blog)) {
