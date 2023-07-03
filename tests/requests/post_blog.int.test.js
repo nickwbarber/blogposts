@@ -37,13 +37,13 @@ afterAll(async () => {
 
 ///////////
 /* tests */
-describe('POST /api/blogs', () => {
-
-  const getBlogWithoutId = blog => {
-    const blogWithoutId = { ...blog }
-    delete blogWithoutId.id
-    return blogWithoutId
-  }
+describe("POST /api/blogs", () => {
+  const getBlogWithoutExtras = (blog) => {
+    const blogWithoutId = { ...blog };
+    delete blogWithoutId.id;
+    delete blogWithoutId.user;
+    return blogWithoutId;
+  };
 
   test('returns successfully', async () => {
     expect(postResponse.status).toBe(201)
