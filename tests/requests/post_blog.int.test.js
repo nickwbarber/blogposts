@@ -27,6 +27,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
+  await Blog.deleteMany({});
   mongoose.connection.close();
 });
 
