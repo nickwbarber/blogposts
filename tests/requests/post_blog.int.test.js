@@ -12,11 +12,12 @@ const newBlog = {
   url: `https://testurl.com/randomNumber=${Math.round(Math.random() * 1000)}`,
   likes: 0,
 };
+Object.freeze(newBlog);
 
 const withoutProps = (blog, props) => {
-  const blogWithoutProps = blog;
+  const blogWithoutProps = { ...blog };
   props.forEach((prop) => {
-    delete blog[prop];
+    delete blogWithoutProps[prop];
   });
   return blogWithoutProps;
 };
