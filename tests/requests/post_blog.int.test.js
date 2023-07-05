@@ -49,7 +49,10 @@ describe("Submitting a blog", () => {
       .post("/api/blogs")
       .send(withoutProps(newBlog, ["likes"]));
 
-    expect(response.body.likes).toBe(0);
+    const foundBlog = response.body;
+
+    expect(response.status).toBe(201);
+    expect(foundBlog.likes).toBe(0);
   });
 
   test("rejects missing title", async () => {
@@ -70,7 +73,8 @@ describe("Submitting a blog", () => {
 
   test("contains information about submitting user", async () => {
     const response = await api.post("/api/blogs").send(newBlog);
+    const foundBlog = response.body;
 
-    expect(response.user.username).toBeDefined();
+    expect(foundBlog.user).toBeDefined();
   });
 });
