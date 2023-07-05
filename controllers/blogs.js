@@ -1,5 +1,6 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user"); // TODO: delete this after implementing User info
 
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({});
@@ -17,6 +18,7 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
+  console.log("body:", request.body);
   const hasRequiredFields = (body) => {
     return ["title", "url"].reduce((acc, field) => {
       return acc && field in body;
@@ -34,7 +36,13 @@ blogRouter.post("/", async (request, response) => {
   blog.likes = blog.likes ? blog.likes : 0;
 
   // NOTE: This is only to test out adding a User to the blog
-  // blog.user = User.findOne({}).id;
+  await User.create({
+    name: "TestName",
+    username: "testusername",
+    passwordHash: "asdfasdf",
+  });
+  const newUser = await User.findOne({});
+  blog.user = newUser.id;
 
   const result = await blog.save();
   response.status(201).json(result);
