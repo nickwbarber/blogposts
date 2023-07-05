@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-underscore-dangle */
-// Desc: Blog model for MongoDB
 const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema({
@@ -8,17 +7,16 @@ const blogSchema = new mongoose.Schema({
   author: String,
   url: String,
   likes: Number,
-  user: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 blogSchema.set("toJSON", {
   transform: (doc, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
+    returnedObj.user = returnedObj.user.toString();
     delete returnedObj._id;
     delete returnedObj.__v;
   },
