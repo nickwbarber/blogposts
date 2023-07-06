@@ -6,47 +6,41 @@ const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../../app");
 const Blog = require("../../models/blog");
+const { createDummyBlogs } = require("../../utils/test_helper");
 
 const api = supertest(app);
 
-const newBlog = {
-  title: "Test Blog",
-  author: "Test Author",
-  url: `https://testurl.com/randomNumber=${Math.round(Math.random() * 1000)}`,
-  likes: 0,
-};
-
-const tV = {
-  blogToGet: undefined,
-  blogsBefore: undefined,
-  response: undefined,
-  blogsAfter: undefined,
-};
-
 beforeAll(async () => {
   await Blog.deleteMany({});
-  await Blog.create(newBlog);
-
-  tV.blogToGet = await Blog.findOne({});
-  tV.blogsBefore = await Blog.find({});
-  tV.response = await api.get(`/api/blogs/id/${tV.blogToGet.id}`);
-  tV.blogsAfter = await Blog.find({});
+  await createDummyBlogs(3);
 });
 
 afterAll(async () => {
+  await Blog.deleteMany({});
   mongoose.connection.close();
+});
+
+describe("Pre-test check", () => {
+  test("There are only 3 blogs in the list", async () => {
+    const blogs = await Blog.find({});
+    expect(blogs.length).toBe(3);
+  });
 });
 
 describe("Getting a blog by id", () => {
   test("returns with code 200", async () => {
-    expect(tV.response.status).toBe(200);
+    const blogId = (await Blog.findOne({}))._id.toString();
+    const response = await api.get(`/api/blogs/id/${blogId}`);
+    expect(response.status).toBe(200);
   });
 
   test("does not alter blog list length", async () => {
-    expect(tV.blogsAfter.length).toBe(tV.blogsBefore.length);
+    expect((await Blog.find({})).length).toBe(3);
   });
 
   test("blog has the correct id", async () => {
-    expect(tV.response.body.id).toEqual(tV.blogToGet.id);
+    const blogId = (await Blog.findOne({}))._id.toString();
+    const response = await api.get(`/api/blogs/id/${blogId}`);
+    expect(response.body.id).toEqual(blogId);
   });
 });
