@@ -18,7 +18,6 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
-  console.log("body:", request.body);
   const hasRequiredFields = (body) => {
     return ["title", "url"].reduce((acc, field) => {
       return acc && field in body;
