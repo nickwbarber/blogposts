@@ -62,11 +62,12 @@ const getDummyUser = () => {
   };
 };
 
-const setupTestDB = async ({ numOfUsers, numOfBlogs }) => {
+const setupTestDB = async ({ numOfUsers, numOfBlogs, withUsers = false }) => {
   await Blog.deleteMany({});
   await User.deleteMany({});
-  await createDummyUsers(numOfUsers);
-  await createDummyBlogsWithUsers(numOfBlogs);
+  if (numOfUsers > 0) await createDummyUsers(numOfUsers);
+  // Creating blogs must happend after creating users because they will get linked to the users
+  if (numOfBlogs > 0) await createDummyBlogs(numOfBlogs, withUsers);
 };
 
 // TODO: write test
