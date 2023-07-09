@@ -144,7 +144,7 @@ describe("getDummyBlogWithUser", () => {
   });
 });
 
-describe.only("setupTestDB", () => {
+describe("setupTestDB", () => {
   it("works", async () => {
     const dbConfig = {
       numOfBlogs: randomIntBetween(1, 5),
