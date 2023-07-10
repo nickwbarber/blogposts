@@ -3,13 +3,11 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const { setupTestDB } = require("../utils/test_helper");
 
-// TODO: show user info
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
   response.json(blogs);
 });
 
-// TODO: show user info
 blogRouter.get("/id/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   if (!(blog instanceof Blog)) {
