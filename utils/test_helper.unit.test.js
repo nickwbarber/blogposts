@@ -16,24 +16,6 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-const expectToHaveProperties = (thing, properties) => {
-  properties.forEach((property) => {
-    expect(thing).toHaveProperty(property);
-  });
-};
-
-const expectPropertiesToBeDefined = (thing, properties) => {
-  properties.forEach((property) => {
-    expect(thing[property]).toBeDefined();
-  });
-};
-
-const expectPropertyTypesToBe = (thing, propertyTypes) => {
-  Object.entries(propertyTypes).forEach(([property, type]) => {
-    expect(typeof thing[property]).toBe(type);
-  });
-};
-
 describe("getDummyBlogWithoutUser", () => {
   it("produces correct structure", async () => {
     const blog = th.getDummyBlogWithoutUser();
@@ -43,9 +25,9 @@ describe("getDummyBlogWithoutUser", () => {
       url: "string",
       likes: "number",
     };
-    expectToHaveProperties(blog, Object.keys(structure));
-    expectPropertiesToBeDefined(blog, Object.keys(structure));
-    expectPropertyTypesToBe(blog, structure);
+    th.expectToHaveProperties(blog, Object.keys(structure));
+    th.expectPropertiesToBeDefined(blog, Object.keys(structure));
+    th.expectPropertyTypesToBe(blog, structure);
   });
 
   it("produces different blogs each time", async () => {
@@ -64,9 +46,9 @@ describe("getDummyUser", () => {
       passwordHash: "string",
     };
 
-    expectToHaveProperties(dummyUser, Object.keys(structure));
-    expectPropertiesToBeDefined(dummyUser, Object.keys(structure));
-    expectPropertyTypesToBe(dummyUser, structure);
+    th.expectToHaveProperties(dummyUser, Object.keys(structure));
+    th.expectPropertiesToBeDefined(dummyUser, Object.keys(structure));
+    th.expectPropertyTypesToBe(dummyUser, structure);
   });
 
   it("produces different users each time", async () => {
@@ -77,11 +59,18 @@ describe("getDummyUser", () => {
 });
 
 describe("createDummyBlogs", () => {
-  // depends on getDummyBlogWithoutUser
+  // depends on `createDummyUsers`
   it("works", async () => {
     await Blog.deleteMany({});
+    await User.deleteMany({});
+
+    await th.createDummyUsers(3);
+
     expect(await Blog.estimatedDocumentCount({})).toBe(0);
+    expect(await User.estimatedDocumentCount({})).toBe(3);
+
     await th.createDummyBlogs(3);
+
     expect(await Blog.estimatedDocumentCount({})).toBe(3);
   });
 });
@@ -107,9 +96,9 @@ describe("getRandomUser", () => {
       passwordHash: "string",
     };
 
-    expectToHaveProperties(randomUser, Object.keys(structure));
-    expectPropertiesToBeDefined(randomUser, Object.keys(structure));
-    expectPropertyTypesToBe(randomUser, structure);
+    th.expectToHaveProperties(randomUser, Object.keys(structure));
+    th.expectPropertiesToBeDefined(randomUser, Object.keys(structure));
+    th.expectPropertyTypesToBe(randomUser, structure);
   });
 });
 
@@ -131,9 +120,9 @@ describe("getDummyBlogWithUser", () => {
       url: "string",
       likes: "number",
     };
-    expectToHaveProperties(blog, Object.keys(structure));
-    expectPropertiesToBeDefined(blog, Object.keys(structure));
-    expectPropertyTypesToBe(blog, structure);
+    th.expectToHaveProperties(blog, Object.keys(structure));
+    th.expectPropertiesToBeDefined(blog, Object.keys(structure));
+    th.expectPropertyTypesToBe(blog, structure);
     expect(blog.user).toBeDefined();
   });
 

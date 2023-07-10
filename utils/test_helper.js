@@ -79,7 +79,31 @@ const withoutProps = (blog, props) => {
   return blogWithoutProps;
 };
 
+// TODO: write test
+const expectToHaveProperties = (thing, properties) => {
+  properties.forEach((property) => {
+    expect(thing).toHaveProperty(property);
+  });
+};
+
+// TODO: write test
+const expectPropertiesToBeDefined = (thing, properties) => {
+  properties.forEach((property) => {
+    expect(thing[property]).toBeDefined();
+  });
+};
+
+// TODO: write test
+const expectPropertyTypesToBe = (thing, propertyTypes) => {
+  Object.entries(propertyTypes).forEach(([property, type]) => {
+    expect(typeof thing[property]).toBe(type);
+  });
+};
+
 module.exports = {
+  expectToHaveProperties,
+  expectPropertyTypesToBe,
+  expectPropertiesToBeDefined,
   createDummyBlogs,
   createDummyBlogsWithUsers,
   createDummyUsers,
