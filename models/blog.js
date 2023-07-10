@@ -20,16 +20,13 @@ const blogSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: true,
+    required: true,
   },
 });
 
 blogSchema.set("toJSON", {
   transform: (doc, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
-    returnedObj.user = returnedObj.user
-      ? returnedObj.user.toString()
-      : "unknown user";
     delete returnedObj._id;
     delete returnedObj.__v;
   },
