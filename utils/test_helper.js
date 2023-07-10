@@ -38,6 +38,7 @@ const createDummyUsers = async (n) => {
 };
 
 const createDummyBlogs = async (n, withUsers = false) => {
+  // TODO: creating a blog without a user is no longer possible
   const blogs = [];
   for (let i = 0; i < n; i++) {
     if (withUsers) {
@@ -62,7 +63,7 @@ const getDummyUser = () => {
   };
 };
 
-const setupTestDB = async ({ numOfUsers, numOfBlogs, withUsers = false }) => {
+const setupTestDB = async ({ numOfUsers, numOfBlogs, withUsers = true }) => {
   await Blog.deleteMany({});
   await User.deleteMany({});
   if (numOfUsers > 0) await createDummyUsers(numOfUsers);
