@@ -15,7 +15,7 @@ const getDummyBlogWithUser = async () => {
   const blog = getDummyBlogWithoutUser();
   const user = await getRandomUser();
 
-  blog.user = user._id;
+  blog.user = user.id;
 
   return blog;
 };
@@ -70,7 +70,6 @@ const setupTestDB = async ({ numOfUsers, numOfBlogs, withUsers = false }) => {
   if (numOfBlogs > 0) await createDummyBlogs(numOfBlogs, withUsers);
 };
 
-// TODO: write test
 const withoutProps = (blog, props) => {
   const blogWithoutProps = { ...blog };
   props.forEach((prop) => {

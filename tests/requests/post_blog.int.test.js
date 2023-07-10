@@ -47,10 +47,16 @@ describe("Pre-test check", () => {
 });
 
 describe("Submitting a blog", () => {
+  const blogToRequestFormat = (blog) => {
+    blog.userId = blog.user;
+    delete blog.user;
+    return blog;
+  };
+
   test("if successful, returns with code 201", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(await getDummyBlogWithUser());
+      .send(blogToRequestFormat(await getDummyBlogWithUser()));
 
     expect(response.status).toBe(201);
   });
@@ -58,7 +64,7 @@ describe("Submitting a blog", () => {
   test("response returns in application-json format", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(await getDummyBlogWithUser());
+      .send(blogToRequestFormat(await getDummyBlogWithUser()));
 
     expect(response.get("content-type")).toMatch(/application\/json/);
   });
@@ -66,7 +72,11 @@ describe("Submitting a blog", () => {
   test("accepts missing likes", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(withoutProps(await getDummyBlogWithUser(), ["likes"]));
+      .send(
+        blogToRequestFormat(
+          withoutProps(await getDummyBlogWithUser(), ["likes"])
+        )
+      );
 
     const foundBlog = response.body;
 
@@ -77,7 +87,11 @@ describe("Submitting a blog", () => {
   test("rejects missing title", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(withoutProps(await getDummyBlogWithUser(), ["title"]));
+      .send(
+        blogToRequestFormat(
+          withoutProps(await getDummyBlogWithUser(), ["title"])
+        )
+      );
 
     expect(response.status).toBe(400);
   });
@@ -85,7 +99,9 @@ describe("Submitting a blog", () => {
   test("rejects missing URL", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(withoutProps(await getDummyBlogWithUser(), ["url"]));
+      .send(
+        blogToRequestFormat(withoutProps(await getDummyBlogWithUser(), ["url"]))
+      );
 
     expect(response.status).toBe(400);
   });
@@ -101,7 +117,7 @@ describe("Submitting a blog", () => {
   test("contains information about submitting user", async () => {
     const response = await api
       .post("/api/blogs")
-      .send(await getDummyBlogWithUser());
+      .send(blogToRequestFormat(await getDummyBlogWithUser()));
     const foundBlog = response.body;
 
     expect(foundBlog.user).toBeDefined();

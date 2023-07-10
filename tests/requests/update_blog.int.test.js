@@ -27,7 +27,6 @@ describe("Updating the author of a blog", () => {
     await setupTestDB({ numOfBlogs: 3, numOfUsers: 0 });
     blogsBefore = await Blog.find({});
     blogToUpdate = await Blog.findOne({});
-    console.log(blogToUpdate);
     responseOnUpdate = await api
       .put(`/api/blogs/${blogToUpdate._id.toString()}`)
       .send({

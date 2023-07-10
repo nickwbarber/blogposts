@@ -1,12 +1,18 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
+const { setupTestDB } = require("../utils/test_helper");
 
+// TODO: show user info
 blogRouter.get("/", async (request, response) => {
-  const blogs = await Blog.find({});
-  await blogs.populate("user", { username: 1, name: 1 });
+  // NOTE: delete setup once user info is implemented
+  await setupTestDB({ numOfBlogs: 6, numOfUsers: 3, withUsers: true });
+  const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
+  // const blogs = await Blog.find({});
   response.json(blogs);
 });
 
+// TODO: show user info
 blogRouter.get("/id/:id", async (request, response) => {
   const blog = await Blog.findById(request.params.id);
   if (!(blog instanceof Blog)) {
@@ -18,24 +24,29 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (request, response) => {
-  const hasRequiredFields = (body) => {
-    return ["title", "url", "user"].reduce((acc, field) => {
-      return acc && field in body;
-    }, true);
-  };
+  const body = request.body;
 
-  if (!hasRequiredFields(request.body)) {
+  const hasRequiredFields = ["title", "url", "userId", "author"].reduce(
+    (acc, field) => {
+      return acc && field in body;
+    },
+    true
+  );
+  if (!hasRequiredFields) {
     response.status(400).end();
     return;
   }
 
-  const blog = new Blog(request.body);
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    user: await User.findById(body.userId),
+    likes: body.likes ? body.likes : 0,
+  });
 
-  // missing likes is okay --> default to 0
-  blog.likes = blog.likes ? blog.likes : 0;
-
-  const result = await blog.save();
-  response.status(201).json(result);
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
 });
 
 blogRouter.delete("/delete/:id", async (request, response) => {
