@@ -47,21 +47,25 @@ describe("GET /api/blogs", () => {
         expect(typeof blog.title).toBe("string");
       });
     });
+
     test("author", () => {
       body.forEach((blog) => {
         expect(typeof blog.author).toBe("string");
       });
     });
+
     test("url", () => {
       body.forEach((blog) => {
         expect(typeof blog.url).toBe("string");
       });
     });
+
     test("likes", () => {
       body.forEach((blog) => {
         expect(typeof blog.likes).toBe("number");
       });
     });
+
     test("user", () => {
       body.forEach((blog) => {
         expect(blog.user).toHaveProperty("username");
