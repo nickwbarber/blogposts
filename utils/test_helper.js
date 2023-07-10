@@ -37,7 +37,7 @@ const createDummyUsers = async (n) => {
   return users;
 };
 
-const createDummyBlogs = async (n, withUsers = false) => {
+const createDummyBlogs = async (n, withUsers = true) => {
   // TODO: creating a blog without a user is no longer possible
   const blogs = [];
   for (let i = 0; i < n; i++) {
