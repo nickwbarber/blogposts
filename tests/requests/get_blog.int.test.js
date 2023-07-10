@@ -1,18 +1,20 @@
-// get_blog.int.test.js
-//
-// Desc: Test getting a specific blog by id
-
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../../app");
 const Blog = require("../../models/blog");
-const { createDummyBlogs } = require("../../utils/test_helper");
+const User = require("../../models/user");
+const { createDummyBlogs, setupTestDB } = require("../../utils/test_helper");
+const { randomIntBetween } = require("../../utils/misc");
 
 const api = supertest(app);
 
+const dbConfig = {
+  numOfBlogs: randomIntBetween(4, 7),
+  numOfUsers: randomIntBetween(2, 4),
+};
+
 beforeAll(async () => {
-  await Blog.deleteMany({});
-  await createDummyBlogs(3);
+  await setupTestDB(dbConfig);
 });
 
 afterAll(async () => {
@@ -23,24 +25,27 @@ afterAll(async () => {
 describe("Pre-test check", () => {
   test("There are only 3 blogs in the list", async () => {
     const blogs = await Blog.find({});
-    expect(blogs.length).toBe(3);
+    expect(blogs.length).toBe(dbConfig.numOfBlogs);
   });
 });
 
 describe("Getting a blog by id", () => {
+  let blogId;
+  let response;
+  beforeAll(async () => {
+    blogId = (await Blog.findOne({}))._id.toString();
+    response = await api.get(`/api/blogs/id/${blogId}`);
+  });
+
   test("returns with code 200", async () => {
-    const blogId = (await Blog.findOne({}))._id.toString();
-    const response = await api.get(`/api/blogs/id/${blogId}`);
     expect(response.status).toBe(200);
   });
 
   test("does not alter blog list length", async () => {
-    expect((await Blog.find({})).length).toBe(3);
+    expect((await Blog.find({})).length).toBe(dbConfig.numOfBlogs);
   });
 
   test("blog has the correct id", async () => {
-    const blogId = (await Blog.findOne({}))._id.toString();
-    const response = await api.get(`/api/blogs/id/${blogId}`);
     expect(response.body.id).toEqual(blogId);
   });
 });
