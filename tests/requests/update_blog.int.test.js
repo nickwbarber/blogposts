@@ -24,7 +24,7 @@ describe("Updating the author of a blog", () => {
   let blogAfterUpdate;
 
   beforeAll(async () => {
-    await setupTestDB({ numOfBlogs: 3, numOfUsers: 0 });
+    await setupTestDB({ numOfUsers: 3, numOfBlogs: 7 });
     blogsBefore = await Blog.find({});
     blogToUpdate = await Blog.findOne({});
     responseOnUpdate = await api
