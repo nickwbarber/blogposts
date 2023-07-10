@@ -5,8 +5,6 @@ const { setupTestDB } = require("../utils/test_helper");
 
 // TODO: show user info
 blogRouter.get("/", async (request, response) => {
-  // NOTE: delete setup once user info is implemented
-  await setupTestDB({ numOfBlogs: 6, numOfUsers: 3, withUsers: true });
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
   response.json(blogs);
 });
