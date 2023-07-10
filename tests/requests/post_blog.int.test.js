@@ -9,6 +9,7 @@ const User = require("../../models/user");
 const {
   setupTestDB,
   withoutProps,
+  getDummyBlogWithoutUser,
   getDummyBlogWithUser,
 } = require("../../utils/test_helper");
 const { randomIntBetween } = require("../../utils/misc");
@@ -85,6 +86,14 @@ describe("Submitting a blog", () => {
     const response = await api
       .post("/api/blogs")
       .send(withoutProps(await getDummyBlogWithUser(), ["url"]));
+
+    expect(response.status).toBe(400);
+  });
+
+  test("rejects missing user", async () => {
+    const response = await api
+      .post("/api/blogs")
+      .send(getDummyBlogWithoutUser());
 
     expect(response.status).toBe(400);
   });
