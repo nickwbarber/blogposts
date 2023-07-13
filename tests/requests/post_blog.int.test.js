@@ -1,3 +1,4 @@
+// TODO: rename foundBlog to something else
 require("dotenv").config();
 const config = require("../../utils/config");
 const supertest = require("supertest");
@@ -9,7 +10,6 @@ const User = require("../../models/user");
 const {
   setupTestDB,
   withoutProps,
-  getDummyBlogWithoutUser,
   getDummyBlogWithUser,
 } = require("../../utils/test_helper");
 const { randomIntBetween } = require("../../utils/misc");
@@ -44,80 +44,101 @@ describe("Pre-test check", () => {
   });
 });
 
+// TODO: move this somewhere more reasonable
+const blogToRequestFormat = (blog) => {
+  blog.userId = blog.user;
+  delete blog.user;
+  return blog;
+};
+
 describe("Submitting a blog", () => {
-  const blogToRequestFormat = (blog) => {
-    blog.userId = blog.user;
-    delete blog.user;
-    return blog;
-  };
+  describe("with all required information", () => {
+    let response;
+    let foundBlog;
 
-  test("if successful, returns with code 201", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(blogToRequestFormat(await getDummyBlogWithUser()));
+    beforeAll(async () => {
+      response = await api
+        .post("/api/blogs")
+        .send(
+          blogToRequestFormat(
+            withoutProps(await getDummyBlogWithUser(), ["likes"])
+          )
+        );
 
-    expect(response.status).toBe(201);
+      foundBlog = response.body;
+    });
+
+    test("returns status 201", async () => {
+      expect(response.status).toBe(201);
+    });
+    test("response returns in application-json format", async () => {
+      expect(response.get("content-type")).toMatch(/application\/json/);
+    });
+    test("defaults missing likes to 0", async () => {
+      expect(foundBlog.likes).toBe(0);
+    });
+
+    // TODO: test for user information
+    // test("", async () => {})
+    // test("contains information about submitting user", async () => {
+    //   const response = await api
+    //     .post("/api/blogs")
+    //     .send(blogToRequestFormat(await getDummyBlogWithUser()));
+    //   const foundBlog = response.body;
+    //   expect(foundBlog.user).toBeDefined();
+    // });
   });
 
-  test("response returns in application-json format", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(blogToRequestFormat(await getDummyBlogWithUser()));
+  describe("without", () => {
+    describe("title", () => {
+      let response;
+      beforeAll(async () => {
+        response = await api
+          .post("/api/blogs")
+          .send(
+            blogToRequestFormat(
+              withoutProps(await getDummyBlogWithUser(), ["title"])
+            )
+          );
+      });
 
-    expect(response.get("content-type")).toMatch(/application\/json/);
-  });
+      test("returns status 400", async () => {
+        expect(response.status).toBe(400);
+      });
+    });
 
-  test("accepts missing likes", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(
-        blogToRequestFormat(
-          withoutProps(await getDummyBlogWithUser(), ["likes"])
-        )
-      );
+    describe("url", () => {
+      let response;
+      beforeAll(async () => {
+        response = await api
+          .post("/api/blogs")
+          .send(
+            blogToRequestFormat(
+              withoutProps(await getDummyBlogWithUser(), ["url"])
+            )
+          );
+      });
 
-    const foundBlog = response.body;
+      test("returns status 400", async () => {
+        expect(response.status).toBe(400);
+      });
+    });
 
-    expect(response.status).toBe(201);
-    expect(foundBlog.likes).toBe(0);
-  });
+    describe("user", () => {
+      let response;
+      beforeAll(async () => {
+        response = await api
+          .post("/api/blogs")
+          .send(
+            blogToRequestFormat(
+              withoutProps(await getDummyBlogWithUser(), ["user"])
+            )
+          );
+      });
 
-  test("rejects missing title", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(
-        blogToRequestFormat(
-          withoutProps(await getDummyBlogWithUser(), ["title"])
-        )
-      );
-
-    expect(response.status).toBe(400);
-  });
-
-  test("rejects missing URL", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(
-        blogToRequestFormat(withoutProps(await getDummyBlogWithUser(), ["url"]))
-      );
-
-    expect(response.status).toBe(400);
-  });
-
-  test("rejects missing user", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(getDummyBlogWithoutUser());
-
-    expect(response.status).toBe(400);
-  });
-
-  test("contains information about submitting user", async () => {
-    const response = await api
-      .post("/api/blogs")
-      .send(blogToRequestFormat(await getDummyBlogWithUser()));
-    const foundBlog = response.body;
-
-    expect(foundBlog.user).toBeDefined();
+      test("returns status 400", async () => {
+        expect(response.status).toBe(400);
+      });
+    });
   });
 });

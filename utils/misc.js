@@ -8,6 +8,15 @@ const randomIntBetween = (min, max) => {
   return Math.floor((max - min + 1) * Math.random()) + 1;
 };
 
+const getTokenFrom = (request) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+  return null;
+};
+
 module.exports = {
+  getTokenFrom,
   randomIntBetween,
 };
