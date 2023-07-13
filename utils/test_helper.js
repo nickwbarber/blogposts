@@ -1,8 +1,8 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
+/** Returns a random user from the database */
 const getRandomUser = async () => {
-  /** assumes there are already users in the db **/
   const numOfUsers = await User.estimatedDocumentCount({});
   if (numOfUsers === 0) {
     throw new Error("there must be users already in the database");
@@ -54,6 +54,7 @@ const createDummyBlogsWithUsers = async (n) => {
   return await createDummyBlogs(n, true);
 };
 
+/** Returns an Object that mimics the User structure that hasn't been entered into the database yet */
 const getDummyUser = () => {
   return {
     username: `TestUser${Math.round(Math.random() * 1000)}`,
