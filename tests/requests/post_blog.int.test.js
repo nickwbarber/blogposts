@@ -23,8 +23,6 @@ const dbConfig = {
 
 beforeAll(async () => {
   await mongoose.connect(config.MONGODB_URI);
-  await Blog.deleteMany({});
-  await User.deleteMany({});
   await setupTestDB(dbConfig);
 });
 
