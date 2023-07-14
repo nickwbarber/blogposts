@@ -1,5 +1,6 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 /** Returns a random user from the database */
 const getRandomUser = async () => {
@@ -38,7 +39,6 @@ const createDummyUsers = async (n) => {
 };
 
 const createDummyBlogs = async (n, withUsers = true) => {
-  // TODO: creating a blog without a user is no longer possible
   const blogs = [];
   for (let i = 0; i < n; i++) {
     if (withUsers) {
@@ -55,11 +55,16 @@ const createDummyBlogsWithUsers = async (n) => {
 };
 
 /** Returns an Object that mimics the User structure that hasn't been entered into the database yet */
-const getDummyUser = () => {
+const getDummyUser = async (password = null) => {
   return {
     username: `TestUser${Math.round(Math.random() * 1000)}`,
     name: `TestName${Math.round(Math.random() * 1000)}`,
-    passwordHash: `TestHash${Math.round(Math.random() * 1000)}`,
+    passwordHash: password
+      ? await bcrypt.hash(password, 10)
+      : await bcrypt.hash(
+          `testpassword-${Math.floor(Math.random() * 1000)}`,
+          10
+        ),
     blogs: [],
   };
 };
@@ -80,21 +85,18 @@ const withoutProps = (blog, props) => {
   return blogWithoutProps;
 };
 
-// TODO: write test
 const expectToHaveProperties = (thing, properties) => {
   properties.forEach((property) => {
     expect(thing).toHaveProperty(property);
   });
 };
 
-// TODO: write test
 const expectPropertiesToBeDefined = (thing, properties) => {
   properties.forEach((property) => {
     expect(thing[property]).toBeDefined();
   });
 };
 
-// TODO: write test
 const expectPropertyTypesToBe = (thing, propertyTypes) => {
   Object.entries(propertyTypes).forEach(([property, type]) => {
     expect(typeof thing[property]).toBe(type);

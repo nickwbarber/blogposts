@@ -1,4 +1,3 @@
-// TODO: rename foundBlog to something else
 require("dotenv").config();
 const config = require("../../utils/config");
 const supertest = require("supertest");
@@ -11,8 +10,15 @@ const {
   setupTestDB,
   withoutProps,
   getDummyBlogWithUser,
+  getDummyBlogWithoutUser,
+  getDummyUser,
 } = require("../../utils/test_helper");
-const { randomIntBetween } = require("../../utils/misc");
+const {
+  randomIntBetween,
+  blogToRequestFormat,
+  getTokenFrom,
+  createTokenFor,
+} = require("../../utils/misc");
 
 const api = supertest(app);
 
@@ -44,28 +50,25 @@ describe("Pre-test check", () => {
   });
 });
 
-// TODO: move this somewhere more reasonable
-const blogToRequestFormat = (blog) => {
-  blog.userId = blog.user;
-  delete blog.user;
-  return blog;
-};
-
 describe("Submitting a blog", () => {
   describe("with all required information", () => {
     let response;
-    let foundBlog;
+    let blog;
+    let user;
+    let updatedUser;
 
     beforeAll(async () => {
+      user = await User.create(getDummyUser());
+      blog = getDummyBlogWithoutUser();
+      const userLoginToken = createTokenFor(user);
+
       response = await api
         .post("/api/blogs")
-        .send(
-          blogToRequestFormat(
-            withoutProps(await getDummyBlogWithUser(), ["likes"])
-          )
-        );
+        .set("authorization", `Bearer ${userLoginToken}`)
+        .send(blogToRequestFormat(withoutProps(blog, ["likes"])));
 
-      foundBlog = response.body;
+      returnedBlog = response.body;
+      updatedUser = await User.findById(user.id).populate("blogs", {});
     });
 
     test("returns status 201", async () => {
@@ -75,21 +78,34 @@ describe("Submitting a blog", () => {
       expect(response.get("content-type")).toMatch(/application\/json/);
     });
     test("defaults missing likes to 0", async () => {
-      expect(foundBlog.likes).toBe(0);
+      expect(returnedBlog.likes).toBe(0);
     });
 
-    // TODO: test for user information
-    // test("", async () => {})
-    // test("contains information about submitting user", async () => {
-    //   const response = await api
-    //     .post("/api/blogs")
-    //     .send(blogToRequestFormat(await getDummyBlogWithUser()));
-    //   const foundBlog = response.body;
-    //   expect(foundBlog.user).toBeDefined();
-    // });
+    test("contains information about submitting user", async () => {
+      expect(returnedBlog.user.id).toBe(user._id.toString());
+    });
+
+    test("user contains the new blog", async () => {
+      expect(updatedUser.blogs.map((blog) => blog.id)).toContain(
+        returnedBlog.id
+      );
+    });
   });
 
   describe("without", () => {
+    describe("token authentication", () => {
+      let response;
+      beforeAll(async () => {
+        response = await api
+          .post("/api/blogs")
+          .send(blogToRequestFormat(await getDummyBlogWithUser()));
+      });
+
+      test("returns status 401", async () => {
+        expect(response.status).toBe(401);
+      });
+    });
+
     describe("title", () => {
       let response;
       beforeAll(async () => {
