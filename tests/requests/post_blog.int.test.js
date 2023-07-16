@@ -16,7 +16,6 @@ const {
 const {
   randomIntBetween,
   blogToRequestFormat,
-  getTokenFrom,
   createTokenFor,
 } = require("../../utils/misc");
 
@@ -105,20 +104,43 @@ describe("Submitting a blog", () => {
         expect(response.status).toBe(401);
       });
     });
+  });
+
+  describe("with token, but without", () => {
+    let blog;
+    let user;
+    let userLoginToken;
+
+    beforeAll(async () => {
+      user = await User.create(getDummyUser());
+      blog = getDummyBlogWithoutUser();
+      userLoginToken = createTokenFor(user);
+    });
 
     describe("title", () => {
       let response;
       beforeAll(async () => {
         response = await api
           .post("/api/blogs")
-          .send(
-            blogToRequestFormat(
-              withoutProps(await getDummyBlogWithUser(), ["title"])
-            )
-          );
+          .set("authorization", `Bearer ${userLoginToken}`)
+          .send(blogToRequestFormat(withoutProps(blog, ["title"])));
       });
 
-      test("returns status 400", async () => {
+      test("returns status 400", () => {
+        expect(response.status).toBe(400);
+      });
+    });
+
+    describe("author", () => {
+      let response;
+      beforeAll(async () => {
+        response = await api
+          .post("/api/blogs")
+          .set("authorization", `Bearer ${userLoginToken}`)
+          .send(blogToRequestFormat(withoutProps(blog, ["author"])));
+      });
+
+      test("returns status 400", () => {
         expect(response.status).toBe(400);
       });
     });
@@ -128,31 +150,11 @@ describe("Submitting a blog", () => {
       beforeAll(async () => {
         response = await api
           .post("/api/blogs")
-          .send(
-            blogToRequestFormat(
-              withoutProps(await getDummyBlogWithUser(), ["url"])
-            )
-          );
+          .set("authorization", `Bearer ${userLoginToken}`)
+          .send(blogToRequestFormat(withoutProps(blog, ["url"])));
       });
 
-      test("returns status 400", async () => {
-        expect(response.status).toBe(400);
-      });
-    });
-
-    describe("user", () => {
-      let response;
-      beforeAll(async () => {
-        response = await api
-          .post("/api/blogs")
-          .send(
-            blogToRequestFormat(
-              withoutProps(await getDummyBlogWithUser(), ["user"])
-            )
-          );
-      });
-
-      test("returns status 400", async () => {
+      test("returns status 400", () => {
         expect(response.status).toBe(400);
       });
     });
