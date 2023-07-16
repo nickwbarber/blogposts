@@ -1,31 +1,36 @@
-const logger = require('./logger')
+const logger = require("./logger");
 
 const requestLogger = (req, res, next) => {
-  logger.info('Method:', req.method)
-  logger.info('Path:  ', req.path)
-  logger.info('Body:  ', req.body)
-  logger.info('---')
-  next()
-}
+  logger.info("Method:", req.method);
+  logger.info("Path:  ", req.path);
+  logger.info("Body:  ", req.body);
+  logger.info("---");
+  next();
+};
 
 const unknownEndpoint = (req, res) => {
-  res.status(404).send({ error: 'unknown endpoint' })
-}
+  res.status(404).send({ error: "unknown endpoint" });
+};
 
 const errorHandler = (err, req, res, next) => {
-  logger.error(err.message)
+  logger.error(err.message);
 
   switch (err.name) {
-    case 'CastError':
-      return res.status(400).send({ error: 'malformatted id' })
-    case 'ValidationError':
-      return res.status(400).json({ error: err.message })
+    case "CastError":
+      return res.status(400).send({ error: "malformatted id" });
+    case "ValidationError":
+      return res.status(400).json({ error: err.message });
     default:
-      break
+      break;
   }
 
-  next(err)
-}
+  next(err);
+};
+
+// TODO: write tokenExtractor
+const tokenExtractor = (req, res) => {
+
+};
 
 module.exports = {
   requestLogger,
