@@ -21,7 +21,7 @@ blogRouter.get("/id/:id", async (request, response) => {
 
 blogRouter.post("/", async (req, res) => {
   // ensure the request is coming from an authenticated user
-  const token = getTokenFrom(req);
+  const token = req.token;
   if (!token) {
     return res.status(401).json({ error: "missing token" }).end();
   }
