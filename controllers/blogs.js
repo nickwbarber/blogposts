@@ -1,7 +1,6 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const { getTokenFrom } = require("../utils/misc");
 const jwt = require("jsonwebtoken");
 
 blogRouter.get("/", async (request, response) => {
@@ -20,21 +19,10 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (req, res) => {
-  // ensure the request is coming from an authenticated user
-  const token = req.token;
-  if (!token) {
-    return res.status(401).json({ error: "missing token" }).end();
-  }
-
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: "token invalid" }).end();
-  }
-
-  // ensure that there is a user with that id
-  const user = await User.findById(decodedToken.id);
+  const user = req.user;
   if (!user) {
-    return res.status(404).json({ error: "no user found with that id" }).end();
+    res.status(401).end();
+    return;
   }
 
   const body = req.body;
@@ -82,12 +70,10 @@ blogRouter.delete("/delete/:id", async (req, res) => {
   // authorize the action
   let authorized = false;
   try {
-    const token = req.token;
-    const decodedToken = jwt.verify(token, process.env.SECRET);
-    authorized = decodedToken.id === blogToDelete.user.toString();
+    authorized = req.user._id.toString() === blogToDelete.user.toString();
   } catch (err) {
-    console.error(err);
     res.status(401).end();
+    return;
   }
 
   if (!authorized) {

@@ -1,5 +1,5 @@
 const logger = require("./logger");
-const { getTokenFrom } = require("../utils/misc");
+const { getUserFrom } = require("../utils/misc");
 
 const requestLogger = (req, res, next) => {
   logger.info("Method:", req.method);
@@ -28,14 +28,14 @@ const errorHandler = (err, req, res, next) => {
   next(err);
 };
 
-const tokenExtractor = (req, res, next) => {
-  req.token = getTokenFrom(req);
+const userExtractor = async (req, res, next) => {
+  req.user = await getUserFrom(req);
   next();
 };
 
 module.exports = {
-  requestLogger,
+  userExtractor,
   unknownEndpoint,
+  requestLogger,
   errorHandler,
-  tokenExtractor,
 };

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const randomIntBetween = (min, max) => {
   if (min > max) {
@@ -18,6 +19,16 @@ const getTokenFrom = (request) => {
   return null;
 };
 
+/**
+ *  gets a user from the request
+ */
+const getUserFrom = async (req) => {
+  let user = null;
+  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+  user = await User.findById(decodedToken.id);
+  return user;
+};
+
 const blogToRequestFormat = (blog) => {
   blog.userId = blog.user;
   delete blog.user;
@@ -25,9 +36,9 @@ const blogToRequestFormat = (blog) => {
 };
 
 /**
-  Mock logging in as the given user without depending on the login route
-  @returns `token`: string 
-*/
+ *  Mock logging in as the given user without depending on the login route
+ *  @returns `token`: string
+ */
 const createTokenFor = (user) => {
   const token = jwt.sign(
     { username: user.username, id: user._id },
@@ -37,8 +48,9 @@ const createTokenFor = (user) => {
 };
 
 module.exports = {
-  getTokenFrom,
   randomIntBetween,
-  blogToRequestFormat,
+  getUserFrom,
+  getTokenFrom,
   createTokenFor,
+  blogToRequestFormat,
 };

@@ -97,6 +97,7 @@ describe("Submitting a blog", () => {
       beforeAll(async () => {
         response = await api
           .post("/api/blogs")
+          .set("authorization", `Bearer ${createTokenFor(getDummyUser())}`)
           .send(blogToRequestFormat(await getDummyBlogWithUser()));
       });
 

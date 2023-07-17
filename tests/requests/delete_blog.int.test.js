@@ -1,7 +1,7 @@
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../../app");
-const { setupTestDB } = require("../../utils/test_helper");
+const { setupTestDB, getDummyUser } = require("../../utils/test_helper");
 const api = supertest(app);
 const Blog = require("../../models/blog");
 const User = require("../../models/user");
@@ -33,11 +33,10 @@ describe("DELETE /api/blogs", () => {
 
       blog = await Blog.findOne({});
       user = await User.findById(blog.user.toString());
-      const userLoginToken = createTokenFor(user);
 
       response = await api
         .delete(`/api/blogs/delete/${blog._id.toString()}`)
-        .set("authorization", `Bearer ${userLoginToken}`);
+        .set("authorization", `Bearer ${createTokenFor(user)}`);
 
       blogsAfter = await Blog.find({});
     });
@@ -70,7 +69,9 @@ describe("DELETE /api/blogs", () => {
       blog = await Blog.findOne({});
       user = await User.findById(blog.user.toString());
 
-      response = await api.delete(`/api/blogs/delete/${blog._id.toString()}`);
+      response = await api
+        .delete(`/api/blogs/delete/${blog._id.toString()}`)
+        .set("authorization", `Bearer ${createTokenFor(getDummyUser())}`);
 
       blogsAfter = await Blog.find({});
     });
