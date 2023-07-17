@@ -57,7 +57,7 @@ describe("DELETE /api/blogs", () => {
   describe("without valid credentials", () => {
     let blogsBefore;
     let blog;
-    let user;
+    let requestingUser;
     let response;
     let blogsAfter;
 
@@ -67,11 +67,12 @@ describe("DELETE /api/blogs", () => {
       blogsBefore = await Blog.find({});
 
       blog = await Blog.findOne({});
-      user = await User.findById(blog.user.toString());
+      requestingUser = await User.findById(blog.user.toString());
+      const wrongUser = await User.create(getDummyUser());
 
       response = await api
         .delete(`/api/blogs/delete/${blog._id.toString()}`)
-        .set("authorization", `Bearer ${createTokenFor(getDummyUser())}`);
+        .set("authorization", `Bearer ${createTokenFor(wrongUser)}`);
 
       blogsAfter = await Blog.find({});
     });

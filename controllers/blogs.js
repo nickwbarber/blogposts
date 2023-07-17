@@ -20,11 +20,6 @@ blogRouter.get("/id/:id", async (request, response) => {
 
 blogRouter.post("/", async (req, res) => {
   const user = req.user;
-  if (!user) {
-    res.status(401).end();
-    return;
-  }
-
   const body = req.body;
 
   // ensure the request has enough information
@@ -68,20 +63,14 @@ blogRouter.delete("/delete/:id", async (req, res) => {
   }
 
   // authorize the action
-  let authorized = false;
-  try {
-    authorized = req.user._id.toString() === blogToDelete.user.toString();
-  } catch (err) {
-    res.status(401).end();
-    return;
-  }
+  const authorized = req.user._id.toString() === blogToDelete.user.toString();
 
   if (!authorized) {
     res.status(401).end();
     return;
   }
-  // actually delete
 
+  // actually delete
   await blogToDelete.deleteOne();
   res.status(204).end();
 });
