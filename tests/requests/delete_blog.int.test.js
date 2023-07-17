@@ -4,7 +4,8 @@ const app = require("../../app");
 const { setupTestDB } = require("../../utils/test_helper");
 const api = supertest(app);
 const Blog = require("../../models/blog");
-const { randomIntBetween } = require("../../utils/misc");
+const User = require("../../models/user");
+const { randomIntBetween, createTokenFor } = require("../../utils/misc");
 
 const dbConfig = {
   numOfBlogs: randomIntBetween(4, 7),
@@ -13,32 +14,77 @@ const dbConfig = {
 
 afterAll(async () => {
   Blog.deleteMany({});
+  User.deleteMany({});
   mongoose.connection.close();
 });
 
-describe("deletion of a blog", () => {
-  let blogsBefore;
-  let blog;
-  let response;
-  let blogsAfter;
+describe("DELETE /api/blogs", () => {
+  describe("with valid credentials", () => {
+    let blogsBefore;
+    let blog;
+    let user;
+    let response;
+    let blogsAfter;
 
-  beforeAll(async () => {
-    await setupTestDB(dbConfig);
-    blogsBefore = await Blog.find({});
-    blog = await Blog.findOne({});
-    response = await api.delete(`/api/blogs/delete/${blog.id}`);
-    blogsAfter = await Blog.find({});
+    beforeAll(async () => {
+      await setupTestDB(dbConfig);
+
+      blogsBefore = await Blog.find({});
+
+      blog = await Blog.findOne({});
+      user = await User.findById(blog.user.toString());
+      const userLoginToken = createTokenFor(user);
+
+      response = await api
+        .delete(`/api/blogs/delete/${blog._id.toString()}`)
+        .set("authorization", `Bearer ${userLoginToken}`);
+
+      blogsAfter = await Blog.find({});
+    });
+
+    test("returns with code 204", async () => {
+      expect(response.status).toBe(204);
+    });
+
+    test("shortens blog list length by one", () => {
+      expect(blogsAfter.length).toBe(blogsBefore.length - 1);
+    });
+
+    test("new blog list does not contain the deleted blog", () => {
+      expect(blogsAfter).not.toContainEqual(blog);
+    });
   });
 
-  test("returns with code 204", async () => {
-    expect(response.status).toBe(204);
-  });
+  describe("without valid credentials", () => {
+    let blogsBefore;
+    let blog;
+    let user;
+    let response;
+    let blogsAfter;
 
-  test("shortens blog list length by one", () => {
-    expect(blogsAfter.length).toBe(blogsBefore.length - 1);
-  });
+    beforeAll(async () => {
+      await setupTestDB(dbConfig);
 
-  test("new blog list does not contain the deleted blog", () => {
-    expect(blogsAfter).not.toContainEqual(blog);
+      blogsBefore = await Blog.find({});
+
+      blog = await Blog.findOne({});
+      user = await User.findById(blog.user.toString());
+
+      response = await api.delete(`/api/blogs/delete/${blog._id.toString()}`);
+
+      blogsAfter = await Blog.find({});
+    });
+
+    test("returns with code 401", async () => {
+      expect(response.status).toBe(401);
+    });
+
+    test("does not alter the blog list length", () => {
+      expect(blogsAfter.length).toBe(blogsBefore.length);
+    });
+
+    test("new blog list contains the deleted blog", () => {
+      expect(blogsAfter).toContainEqual(blog);
+    });
   });
 });

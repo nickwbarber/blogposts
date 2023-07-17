@@ -70,14 +70,34 @@ blogRouter.post("/", async (req, res) => {
   res.status(201).json(savedBlog).end();
 });
 
-blogRouter.delete("/delete/:id", async (request, response) => {
-  const { id } = request.params;
+blogRouter.delete("/delete/:id", async (req, res) => {
+  // find the blog requested for deletion
+  const { id } = req.params;
   const blogToDelete = await Blog.findById(id);
   if (!blogToDelete) {
-    response.status(404).end();
+    res.status(404).end();
+    return;
   }
+
+  // authorize the action
+  let authorized = false;
+  try {
+    const token = req.token;
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    authorized = decodedToken.id === blogToDelete.user.toString();
+  } catch (err) {
+    console.error(err);
+    res.status(401).end();
+  }
+
+  if (!authorized) {
+    res.status(401).end();
+    return;
+  }
+  // actually delete
+
   await blogToDelete.deleteOne();
-  response.status(204).end();
+  res.status(204).end();
 });
 
 blogRouter.put("/:id", async (request, response) => {
