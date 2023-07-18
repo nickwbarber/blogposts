@@ -65,7 +65,7 @@ const getDummyUser = async (password = null) => {
           `testpassword-${Math.floor(Math.random() * 1000)}`,
           10
         ),
-    blogs: [],
+    // blogs: [],
   };
 };
 
