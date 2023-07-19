@@ -24,7 +24,11 @@ const getTokenFrom = (request) => {
  */
 const getUserFrom = async (req) => {
   let user = null;
-  const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET);
+  const token = getTokenFrom(req);
+  if (!token) {
+    return user;
+  }
+  const decodedToken = jwt.verify(token, process.env.SECRET);
   user = await User.findById(decodedToken.id);
   return user;
 };

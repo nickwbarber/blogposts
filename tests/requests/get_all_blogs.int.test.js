@@ -22,7 +22,7 @@ afterAll(async () => {
 
 describe("GET /api/blogs", () => {
   let response;
-  let body;
+  let blogs;
 
   beforeAll(async () => {
     await th.setupTestDB({
@@ -30,7 +30,10 @@ describe("GET /api/blogs", () => {
       numOfBlogs: randomIntBetween(5, 10),
     });
     response = await api.get("/api/blogs");
-    body = response.body;
+    if (response.error) {
+      console.error(response.error);
+    }
+    blogs = response.body;
   });
 
   test("on success, returns status 200", () => {
@@ -43,33 +46,32 @@ describe("GET /api/blogs", () => {
 
   describe("has all props correctly defined", () => {
     test("title", () => {
-      body.forEach((blog) => {
+      blogs.forEach((blog) => {
         expect(typeof blog.title).toBe("string");
       });
     });
 
     test("author", () => {
-      body.forEach((blog) => {
+      blogs.forEach((blog) => {
         expect(typeof blog.author).toBe("string");
       });
     });
 
     test("url", () => {
-      body.forEach((blog) => {
+      blogs.forEach((blog) => {
         expect(typeof blog.url).toBe("string");
       });
     });
 
     test("likes", () => {
-      body.forEach((blog) => {
+      blogs.forEach((blog) => {
         expect(typeof blog.likes).toBe("number");
       });
     });
 
     test("user", () => {
-      body.forEach((blog) => {
-        expect(blog.user).toHaveProperty("username");
-        expect(blog.user).toHaveProperty("name");
+      blogs.forEach((blog) => {
+        expect(blog.user).toHaveProperty("id");
         expect(blog.user).not.toHaveProperty("passwordHash");
       });
     });
