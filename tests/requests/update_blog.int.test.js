@@ -2,7 +2,9 @@ const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../../app");
 const Blog = require("../../models/blog");
+const User = require("../../models/user");
 const { setupTestDB } = require("../../utils/test_helper");
+const { createTokenFor } = require("../../utils/misc");
 
 const api = supertest(app);
 
@@ -19,6 +21,7 @@ describe("Updating the author of a blog", () => {
 
   let blogsBefore;
   let blogToUpdate;
+  let user;
   let responseOnUpdate;
   let blogsAfter;
   let blogAfterUpdate;
@@ -27,8 +30,10 @@ describe("Updating the author of a blog", () => {
     await setupTestDB({ numOfUsers: 3, numOfBlogs: 7 });
     blogsBefore = await Blog.find({});
     blogToUpdate = await Blog.findOne({});
+    user = await User.findById(blogToUpdate.user);
     responseOnUpdate = await api
       .put(`/api/blogs/${blogToUpdate._id.toString()}`)
+      .set("Authorization", `Bearer ${createTokenFor(user)}`)
       .send({
         title: TEST_TITLE,
         author: TEST_AUTHOR,
