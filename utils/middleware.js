@@ -20,7 +20,7 @@ const errorHandler = (err, req, res, next) => {
     case "CastError":
       return res.status(400).send({ error: "malformatted id" });
     case "ValidationError":
-      return res.status(400).json({ error: err.message });
+      return res.status(400).json({ error: `ValidationError: ${err.message}` });
     case "JsonWebTokenError":
       return res.status(401).json({ error: "invalid token" });
     case "TokenExpiredError":
