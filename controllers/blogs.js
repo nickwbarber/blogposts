@@ -19,6 +19,12 @@ blogRouter.get("/id/:id", async (request, response) => {
 });
 
 blogRouter.post("/", async (req, res) => {
+  // make sure a user has logged in
+  if (!req.user) {
+    res.status(401).json({ error: "no user found" });
+    return;
+  }
+
   const user = req.user;
   const body = req.body;
 
