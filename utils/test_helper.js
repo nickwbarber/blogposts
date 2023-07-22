@@ -42,7 +42,12 @@ const createDummyBlogs = async (n, withUsers = true) => {
   const blogs = [];
   for (let i = 0; i < n; i++) {
     if (withUsers) {
-      blogs.push(await Blog.create(await getDummyBlogWithUser()));
+      const blog = await getDummyBlogWithUser();
+      const createdBlog = await Blog.create(blog);
+      blogs.push(createdBlog);
+      const user = await User.findById(createdBlog.user);
+      user.blogs.push(createdBlog.id);
+      await user.save();
     } else {
       blogs.push(await Blog.create(getDummyBlogWithoutUser()));
     }
