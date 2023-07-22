@@ -33,6 +33,9 @@ const getUserFrom = async (req) => {
   return user;
 };
 
+/**
+ * converts a blog to the format that the request expects
+ */
 const blogToRequestFormat = (blog) => {
   blog.userId = blog.user;
   delete blog.user;
