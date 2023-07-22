@@ -33,7 +33,7 @@ const getDummyBlogWithoutUser = () => {
 const createDummyUsers = async (n) => {
   const users = [];
   for (let i = 0; i < n; i++) {
-    users.push(await User.create(getDummyUser()));
+    users.push(await User.create(await getDummyUser()));
   }
   return users;
 };
@@ -60,8 +60,8 @@ const createDummyBlogsWithUsers = async (n) => {
 };
 
 /** Returns an Object that mimics the User structure that hasn't been entered into the database yet */
-const getDummyUser = async (password = null) => {
-  return {
+const getDummyUser = async (password = "") => {
+  const user = {
     username: `TestUser${Math.round(Math.random() * 1000)}`,
     name: `TestName${Math.round(Math.random() * 1000)}`,
     passwordHash: password
@@ -70,8 +70,9 @@ const getDummyUser = async (password = null) => {
           `testpassword-${Math.floor(Math.random() * 1000)}`,
           10
         ),
-    // blogs: [],
+    blogs: [],
   };
+  return user;
 };
 
 const setupTestDB = async ({ numOfUsers, numOfBlogs, withUsers = true }) => {
