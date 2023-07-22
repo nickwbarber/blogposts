@@ -3,7 +3,6 @@ const Blog = require("../models/blog");
 
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
-  console.log(blogs[0].user);
   response.json(blogs);
 });
 
@@ -81,7 +80,10 @@ blogRouter.delete("/delete/:id", async (req, res) => {
 });
 
 blogRouter.put("/:id", async (request, response) => {
-  const blogToUpdate = await Blog.findById(request.params.id);
+  const blogToUpdate = await Blog.findById(request.params.id).populate("user", {
+    username: 1,
+    name: 1,
+  });
 
   if (!(blogToUpdate instanceof Blog)) {
     response.status(404).end();
@@ -94,8 +96,8 @@ blogRouter.put("/:id", async (request, response) => {
     }
   });
 
-  const result = await blogToUpdate.save();
-  response.status(200).json(result);
+  await blogToUpdate.save();
+  response.status(200).json(blogToUpdate);
 });
 
 module.exports = blogRouter;
