@@ -21,6 +21,10 @@
   },
   "homepage": "https://github.com/nickwbarber/blogposts#readme",
   "dependencies": {
+    "@types/jest": "^29.5.3",
+    "@types/node": "^20.4.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
@@ -30,7 +34,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.2.0",
     "mongoose-unique-validator": "^4.0.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "typescript": "^5.1.6"
   },
   "devDependencies": {
     "eslint": "^8.41.0",
